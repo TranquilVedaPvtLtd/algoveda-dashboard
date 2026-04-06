@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="UTF-8">
+<title>AlgoVeda - Backtest Report</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Inter", system-ui, sans-serif; background: #0A1628; color: #E8ECF1; padding: 20px; max-width: 1100px; margin: 0 auto; }
+h1 { color: #FFD700; font-size: 22px; margin-bottom: 4px; }
+h2 { color: #FFD700; font-size: 14px; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+.sub { color: #4A5568; font-size: 12px; margin-bottom: 16px; }
+.nav { margin-bottom: 12px; font-size: 12px; }
+.nav a { color: #FFD700; text-decoration: none; } .nav a:hover { text-decoration: underline; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin: 12px 0; }
+.card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px; text-align: center; }
+.card .v { font-size: 22px; font-weight: 800; color: #FFD700; }
+.card .l { font-size: 9px; color: #4A5568; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+.section { background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th { text-align: left; font-size: 9px; color: #3A4558; text-transform: uppercase; letter-spacing: 1px; padding: 6px 8px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+td { padding: 5px 8px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.win { color: #00E676; } .lose { color: #FF5252; }
+.insight { background: rgba(255,215,0,0.05); border: 1px solid rgba(255,215,0,0.15); border-radius: 8px; padding: 14px; margin: 12px 0; font-size: 13px; line-height: 1.6; }
+.insight strong { color: #FFD700; }
+.bar { display: inline-block; height: 16px; border-radius: 3px; margin-right: 4px; vertical-align: middle; }
+.bar.green { background: #00E676; } .bar.red { background: #FF5252; }
+.footer { margin-top: 20px; font-size: 10px; color: #1E293B; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 8px; }
+</style>
+</head><body>
+
+<div class="nav"><a href="index.html">Live Dashboard</a> | <a href="history.html">History</a> | <strong>Backtest Report</strong></div>
+<h1>AlgoVeda - Strategy Backtest Report</h1>
+<p class="sub">Natural Gas MCX | 15-min candles | 3930 candles | 2025-12-08 21:45:00 to 2026-04-06 17:15:00</p>
+
+<div class="insight">
+<strong>Key Finding:</strong> The strategy IS profitable historically (Rs 1652 over 4 months).
+Today's Rs -3,030 loss was caused by a V-reversal day where BUY and SELL sets cancelled each other out.
+<br><br>
+<strong>Recommendations:</strong><br>
+1. Drop 11 losing sets (DB1-DB3, BB1-BB5, RB4, 9Q1-9Q2) - saves Rs 193<br>
+2. Tighten stop loss from Rs 4 to Rs 1 - improves P&L by Rs 874 (+53%)<br>
+3. Top performers are <strong>RS1-RS3</strong> (Reversal Sell) at Rs 188 each
+</div>
+
+<h2>Strategy Comparison</h2>
+<div class="grid">
+<div class="card"><div class="v" style="color:#FFD700">Rs 1652</div><div class="l">Original 27 Sets</div></div>
+<div class="card"><div class="v" style="color:#00E676">Rs 1,845</div><div class="l">16 Profitable Sets Only</div></div>
+<div class="card"><div class="v" style="color:#00E676">Rs 2,526</div><div class="l">Optimal SL (Rs 1)</div></div>
+<div class="card"><div class="v" style="color:#FFD700">Rs 1364</div><div class="l">With EMA Filter</div></div>
+<div class="card"><div class="v" style="color:#00E676">16</div><div class="l">Profitable Sets</div></div>
+<div class="card"><div class="v" style="color:#FF5252">11</div><div class="l">Losing Sets</div></div>
+</div>
+
+<h2>Per-Set Performance (Sorted by P&L)</h2>
+<div class="section">
+<table>
+<tr><th>Set</th><th>Status</th><th>P&L (4 mo)</th><th>Trades</th><th>Win Rate</th><th>Avg Win</th><th>Avg Loss</th></tr>
+<tr>
+        <td><strong>RS1</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 188</td>
+        <td>163</td>
+        <td>33%</td>
+        <td>Rs 9.0</td>
+        <td>Rs -2.7</td>
+    </tr>
+<tr>
+        <td><strong>RS2</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 188</td>
+        <td>163</td>
+        <td>33%</td>
+        <td>Rs 9.0</td>
+        <td>Rs -2.7</td>
+    </tr>
+<tr>
+        <td><strong>RS3</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 188</td>
+        <td>163</td>
+        <td>33%</td>
+        <td>Rs 9.0</td>
+        <td>Rs -2.7</td>
+    </tr>
+<tr>
+        <td><strong>DS1</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>DS2</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>DS3</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>DS4</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>DS5</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>BS1</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>BS2</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>9Q3</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>9Q4</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 127</td>
+        <td>123</td>
+        <td>41%</td>
+        <td>Rs 7.6</td>
+        <td>Rs -3.6</td>
+    </tr>
+<tr>
+        <td><strong>BS3</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 111</td>
+        <td>80</td>
+        <td>50%</td>
+        <td>Rs 8.3</td>
+        <td>Rs -5.5</td>
+    </tr>
+<tr>
+        <td><strong>RB1</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 8</td>
+        <td>163</td>
+        <td>33%</td>
+        <td>Rs 5.9</td>
+        <td>Rs -2.8</td>
+    </tr>
+<tr>
+        <td><strong>RB2</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 8</td>
+        <td>163</td>
+        <td>33%</td>
+        <td>Rs 5.9</td>
+        <td>Rs -2.8</td>
+    </tr>
+<tr>
+        <td><strong>RB3</strong></td>
+        <td class="win">PROFIT</td>
+        <td class="win">Rs 8</td>
+        <td>163</td>
+        <td>33%</td>
+        <td>Rs 5.9</td>
+        <td>Rs -2.8</td>
+    </tr>
+<tr>
+        <td><strong>RB4</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -14</td>
+        <td>134</td>
+        <td>36%</td>
+        <td>Rs 6.0</td>
+        <td>Rs -3.5</td>
+    </tr>
+<tr>
+        <td><strong>DB1</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -15</td>
+        <td>138</td>
+        <td>34%</td>
+        <td>Rs 6.1</td>
+        <td>Rs -3.3</td>
+    </tr>
+<tr>
+        <td><strong>DB2</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -15</td>
+        <td>138</td>
+        <td>34%</td>
+        <td>Rs 6.1</td>
+        <td>Rs -3.3</td>
+    </tr>
+<tr>
+        <td><strong>DB3</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -15</td>
+        <td>138</td>
+        <td>34%</td>
+        <td>Rs 6.1</td>
+        <td>Rs -3.3</td>
+    </tr>
+<tr>
+        <td><strong>BB1</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -15</td>
+        <td>138</td>
+        <td>34%</td>
+        <td>Rs 6.1</td>
+        <td>Rs -3.3</td>
+    </tr>
+<tr>
+        <td><strong>BB3</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -15</td>
+        <td>138</td>
+        <td>34%</td>
+        <td>Rs 6.1</td>
+        <td>Rs -3.3</td>
+    </tr>
+<tr>
+        <td><strong>BB5</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -15</td>
+        <td>138</td>
+        <td>34%</td>
+        <td>Rs 6.1</td>
+        <td>Rs -3.3</td>
+    </tr>
+<tr>
+        <td><strong>9Q1</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -15</td>
+        <td>138</td>
+        <td>34%</td>
+        <td>Rs 6.1</td>
+        <td>Rs -3.3</td>
+    </tr>
+<tr>
+        <td><strong>9Q2</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -15</td>
+        <td>138</td>
+        <td>34%</td>
+        <td>Rs 6.1</td>
+        <td>Rs -3.3</td>
+    </tr>
+<tr>
+        <td><strong>BB2</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -29</td>
+        <td>174</td>
+        <td>29%</td>
+        <td>Rs 6.0</td>
+        <td>Rs -2.7</td>
+    </tr>
+<tr>
+        <td><strong>BB4</strong></td>
+        <td class="lose">LOSS</td>
+        <td class="lose">Rs -29</td>
+        <td>174</td>
+        <td>29%</td>
+        <td>Rs 6.0</td>
+        <td>Rs -2.7</td>
+    </tr>
+
+</table>
+</div>
+
+<h2>Stop Loss Optimization</h2>
+<div class="section">
+<p style="font-size:12px;color:#8B95A5;margin-bottom:10px">P&L across all 27 sets at different stop loss levels (4 months of data)</p>
+<table>
+<tr><th>Stop Loss</th><th>Total P&L</th><th>Total Trades</th><th>Visual</th></tr>
+<tr><td>Rs 1.0</td><td class="win">Rs 2526</td><td>-</td>
+    <td><span class="bar green" style="width:84px"></span></td></tr>
+<tr><td>Rs 1.5</td><td class="win">Rs 2026</td><td>-</td>
+    <td><span class="bar green" style="width:67px"></span></td></tr>
+<tr><td>Rs 2.0</td><td class="win">Rs 1902</td><td>-</td>
+    <td><span class="bar green" style="width:63px"></span></td></tr>
+<tr><td>Rs 2.5</td><td class="win">Rs 1798</td><td>-</td>
+    <td><span class="bar green" style="width:59px"></span></td></tr>
+<tr><td>Rs 3.0</td><td class="win">Rs 1636</td><td>-</td>
+    <td><span class="bar green" style="width:54px"></span></td></tr>
+<tr><td>Rs 3.5</td><td class="win">Rs 1541</td><td>-</td>
+    <td><span class="bar green" style="width:51px"></span></td></tr>
+<tr><td>Rs 4.0</td><td class="win">Rs 1552</td><td>-</td>
+    <td><span class="bar green" style="width:51px"></span></td></tr>
+<tr><td>Rs 5.0</td><td class="win">Rs 1313</td><td>-</td>
+    <td><span class="bar green" style="width:43px"></span></td></tr>
+<tr><td>Rs 6.0</td><td class="win">Rs 906</td><td>-</td>
+    <td><span class="bar green" style="width:30px"></span></td></tr>
+<tr><td>Rs 7.0</td><td class="win">Rs 910</td><td>-</td>
+    <td><span class="bar green" style="width:30px"></span></td></tr>
+<tr><td>Rs 8.0</td><td class="win">Rs 580</td><td>-</td>
+    <td><span class="bar green" style="width:19px"></span></td></tr>
+<tr><td>Rs 10.0</td><td class="win">Rs 381</td><td>-</td>
+    <td><span class="bar green" style="width:12px"></span></td></tr>
+</table>
+</div>
+
+<h2>Recommended Configuration</h2>
+<div class="insight">
+<strong>For next trading day, run only these 16 sets:</strong><br>
+RS1, RS2, RS3, DS1, DS2, DS3, DS4, DS5, BS1, BS2, 9Q3, 9Q4, BS3, RB1, RB2, RB3<br><br>
+<strong>Kill these 11 sets:</strong><br>
+RB4, DB1, DB2, DB3, BB1, BB3, BB5, 9Q1, 9Q2, BB2, BB4<br><br>
+<strong>Stop Loss:</strong> Rs 1.0 (optimal based on 4 months of data)<br>
+<strong>Expected improvement:</strong> +53% P&L vs current configuration
+</div>
+
+<div class="footer">
+AlgoVeda OMS v2.0 - Jarvis Daily (Tranquil Veda Pvt Ltd) | Backtest generated 2026-04-06 17:20<br>
+Data: 3930 candles | 2025-12-08 21:45:00 to 2026-04-06 17:15:00
+</div>
+</body></html>
