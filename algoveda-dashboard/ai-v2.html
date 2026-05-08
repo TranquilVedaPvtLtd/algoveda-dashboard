@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Scalper v2 — VWAP Mean Reversion · NIFTY</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafbfc;
+    --panel: #ffffff;
+    --border: #e1e4e8;
+    --text: #1f2328;
+    --text-mute: #57606a;
+    --text-dim: #8c959f;
+    --accent: #0969da;
+    --teal: #1a7f64;
+    --coral: #d1242f;
+    --amber: #b08800;
+    --shadow: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.5 'Inter', system-ui, -apple-system, sans-serif; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+  header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  header .title { display: flex; align-items: baseline; gap: 12px; }
+  header h1 { font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  header .strategy-tag { font-size: 11px; font-weight: 600; color: var(--accent); background: #ddf4ff; padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+  header .meta { font-size: 12px; color: var(--text-mute); font-family: 'JetBrains Mono', monospace; display: flex; gap: 16px; align-items: center; }
+  .pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--teal); animation: pulse 1.5s ease-in-out infinite; margin-right: 6px; }
+  .pulse.stale { background: var(--coral); animation: none; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .tile { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .tile-label { color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin-bottom: 6px; }
+  .tile-value { font-size: 22px; font-weight: 600; font-family: 'JetBrains Mono', monospace; line-height: 1.1; }
+  .tile-sub { font-size: 11px; color: var(--text-mute); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+  .tile-pos { color: var(--teal); }
+  .tile-neg { color: var(--coral); }
+
+  .grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items: start; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr; } }
+
+  .chart-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); padding: 16px; }
+  .chart-panel h2 { margin: 0 0 12px; font-size: 13px; font-weight: 600; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.05em; }
+  #chart { width: 100%; height: 460px; }
+  .chart-legend { display: flex; gap: 16px; margin-top: 8px; font-size: 11px; color: var(--text-mute); font-family: 'JetBrains Mono', monospace; }
+  .chart-legend .swatch { display: inline-block; width: 12px; height: 2px; vertical-align: middle; margin-right: 4px; }
+
+  .side { display: flex; flex-direction: column; gap: 16px; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); padding: 16px; }
+  .panel h2 { margin: 0 0 12px; font-size: 13px; font-weight: 600; color: var(--text-mute); text-transform: uppercase; letter-spacing: 0.05em; }
+  .position-empty { color: var(--text-dim); font-style: italic; padding: 12px 0; text-align: center; }
+  .position-card { padding: 12px; border-radius: 8px; background: #f6f8fa; border: 1px solid var(--border); }
+  .position-card .side-label { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .position-card .side-LONG { background: #dafbe1; color: var(--teal); }
+  .position-card .side-SHORT { background: #ffeef0; color: var(--coral); }
+  .position-card .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  .position-card .row .k { color: var(--text-mute); }
+  .position-card .upnl { font-size: 18px; font-weight: 600; margin: 8px 0 4px; font-family: 'JetBrains Mono', monospace; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+  th { text-align: left; padding: 6px 8px; color: var(--text-dim); font-weight: 500; border-bottom: 1px solid var(--border); text-transform: uppercase; font-size: 10px; letter-spacing: 0.05em; }
+  td { padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  td.side-LONG { color: var(--teal); font-weight: 600; }
+  td.side-SHORT { color: var(--coral); font-weight: 600; }
+  td.pnl-pos { color: var(--teal); }
+  td.pnl-neg { color: var(--coral); }
+  td.reason { font-size: 10px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+
+  .footer { margin-top: 20px; font-size: 11px; color: var(--text-dim); text-align: center; line-height: 1.6; }
+  .footer code { background: #f6f8fa; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
+  .params-bar { font-family: 'JetBrains Mono', monospace; color: var(--text-mute); font-size: 11px; padding: 8px 12px; background: #f6f8fa; border-radius: 6px; margin-bottom: 16px; border: 1px solid var(--border); }
+
+  .empty-state { text-align: center; color: var(--text-dim); padding: 40px 20px; font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="title">
+      <h1>AlgoVeda · AI Scalper v2</h1>
+      <span class="strategy-tag" id="strategy-tag">VWAP Mean Reversion</span>
+    </div>
+    <div class="meta">
+      <span><span class="pulse" id="pulse"></span><span id="symbol">—</span> · <span id="mode">PAPER</span></span>
+      <span id="last-update">—</span>
+    </div>
+  </header>
+
+  <div class="params-bar" id="params">params: —</div>
+
+  <div class="tiles">
+    <div class="tile"><div class="tile-label">LTP</div><div class="tile-value" id="ltp">—</div><div class="tile-sub" id="ltp-sub">—</div></div>
+    <div class="tile"><div class="tile-label">VWAP</div><div class="tile-value" id="vwap">—</div><div class="tile-sub" id="vwap-sub">σ —</div></div>
+    <div class="tile"><div class="tile-label">Z-Score</div><div class="tile-value" id="zscore">—</div><div class="tile-sub" id="zscore-sub">distance from mean</div></div>
+    <div class="tile"><div class="tile-label">Session P&amp;L</div><div class="tile-value" id="pnl">₹0</div><div class="tile-sub" id="pnl-sub">target ₹10,000</div></div>
+    <div class="tile"><div class="tile-label">Trades</div><div class="tile-value" id="trades-count">0</div><div class="tile-sub" id="trades-sub">— wins</div></div>
+    <div class="tile"><div class="tile-label">Ticks</div><div class="tile-value" id="ticks">0</div><div class="tile-sub" id="ticks-sub">— last</div></div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="chart-panel">
+        <h2>NIFTY · Anchored VWAP &amp; Bands</h2>
+        <div id="chart"></div>
+        <div class="chart-legend">
+          <span><span class="swatch" style="background:#1f2328"></span>Price</span>
+          <span><span class="swatch" style="background:#0969da; height:2px"></span>VWAP</span>
+          <span><span class="swatch" style="background:#54aeff; height:1px"></span>±1σ</span>
+          <span><span class="swatch" style="background:#b08800; height:1px; border-top:1px dashed"></span>±2σ entry</span>
+          <span><span class="swatch" style="background:#1a7f64; border-radius:50%; height:6px; width:6px"></span>LONG entry</span>
+          <span><span class="swatch" style="background:#d1242f; border-radius:50%; height:6px; width:6px"></span>SHORT entry</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <h2>Open Position</h2>
+        <div id="position">
+          <div class="position-empty">flat — awaiting signal</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Closed Trades</h2>
+        <div id="trades-table-wrap">
+          <div class="empty-state">No trades yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Strategy: fade extensions ≥ <code>1.5σ</code> from anchored VWAP, target VWAP touch, stop on further <code>1σ</code> extension.
+    <br>
+    Paper-trade only. Sized at <code id="lot-info">10 lots</code>. Source <code>src/ai_scalper_v2.py</code>.
+  </div>
+</div>
+
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+const fmtINR = v => (v >= 0 ? '+' : '−') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+const fmtPx = v => v != null ? v.toFixed(2) : '—';
+
+const chart = LightweightCharts.createChart(document.getElementById('chart'), {
+  layout: { background: { color: '#ffffff' }, textColor: '#57606a', fontFamily: 'JetBrains Mono, monospace' },
+  grid: { vertLines: { color: '#f0f3f6' }, horzLines: { color: '#f0f3f6' } },
+  rightPriceScale: { borderColor: '#e1e4e8' },
+  timeScale: { timeVisible: true, secondsVisible: false, borderColor: '#e1e4e8' },
+  crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+  height: 460,
+});
+const candleSeries = chart.addCandlestickSeries({
+  upColor: '#1a7f64', downColor: '#d1242f',
+  borderUpColor: '#1a7f64', borderDownColor: '#d1242f',
+  wickUpColor: '#1a7f64', wickDownColor: '#d1242f',
+});
+const vwapLine = chart.addLineSeries({ color: '#0969da', lineWidth: 2, title: 'VWAP', priceLineVisible: false });
+const upper1 = chart.addLineSeries({ color: '#54aeff', lineWidth: 1, title: '+1σ', priceLineVisible: false });
+const lower1 = chart.addLineSeries({ color: '#54aeff', lineWidth: 1, title: '−1σ', priceLineVisible: false });
+const upper2 = chart.addLineSeries({ color: '#b08800', lineWidth: 1, lineStyle: 2, title: '+2σ entry', priceLineVisible: false });
+const lower2 = chart.addLineSeries({ color: '#b08800', lineWidth: 1, lineStyle: 2, title: '−2σ entry', priceLineVisible: false });
+
+window.addEventListener('resize', () => {
+  chart.applyOptions({ width: document.getElementById('chart').clientWidth });
+});
+
+async function fetchState() {
+  // Try the public static JSON first (works on GitHub Pages and locally via Flask).
+  try {
+    const r = await fetch('./state-ai-v2.json?t=' + Date.now());
+    if (r.ok) return await r.json();
+  } catch (e) {}
+  // Fallback: local Flask /state endpoint
+  const r2 = await fetch('/state');
+  return await r2.json();
+}
+
+function renderTiles(s) {
+  document.getElementById('ltp').innerText = fmtPx(s.ltp);
+  document.getElementById('ltp-sub').innerText =
+    (s.session_high != null && s.session_low != null)
+      ? `H ${fmtPx(s.session_high)} · L ${fmtPx(s.session_low)}` : '—';
+  document.getElementById('vwap').innerText = fmtPx(s.vwap);
+  document.getElementById('vwap-sub').innerText = s.sigma != null ? `σ ${s.sigma.toFixed(2)} pts` : 'σ —';
+  const z = s.z_score;
+  const zEl = document.getElementById('zscore');
+  zEl.innerText = z != null ? z.toFixed(2) : '—';
+  zEl.className = 'tile-value' + (z != null && z > 1.5 ? ' tile-neg' : z != null && z < -1.5 ? ' tile-pos' : '');
+  document.getElementById('zscore-sub').innerText =
+    z != null ? (Math.abs(z) >= 1.5 ? `EXTREME (${z >= 0 ? 'short setup' : 'long setup'})` : 'within bands') : '—';
+  const pnl = s.session_pnl || 0;
+  const pnlEl = document.getElementById('pnl');
+  pnlEl.innerText = fmtINR(pnl);
+  pnlEl.className = 'tile-value' + (pnl > 0 ? ' tile-pos' : pnl < 0 ? ' tile-neg' : '');
+  const target = 10000;
+  const pct = Math.min(Math.max((pnl / target) * 100, -100), 200);
+  document.getElementById('pnl-sub').innerText = `target ₹10,000 · ${pct >= 0 ? pct.toFixed(0) : pct.toFixed(0)}%`;
+  document.getElementById('trades-count').innerText = (s.trades || []).length;
+  const wins = (s.trades || []).filter(t => t.pnl > 0).length;
+  document.getElementById('trades-sub').innerText = `${wins} wins · ${(s.trades || []).length - wins} losses`;
+  document.getElementById('ticks').innerText = (s.tick_count || 0).toLocaleString('en-IN');
+  document.getElementById('ticks-sub').innerText = s.last_tick_at ? 'last ' + s.last_tick_at.split('T')[1].slice(0, 8) : '—';
+}
+
+function renderPosition(s) {
+  const div = document.getElementById('position');
+  if (!s.position) {
+    div.innerHTML = '<div class="position-empty">flat — awaiting signal</div>';
+    return;
+  }
+  const p = s.position;
+  const upnl = p.unrealized_pnl || 0;
+  const pnlClass = upnl > 0 ? 'tile-pos' : upnl < 0 ? 'tile-neg' : '';
+  div.innerHTML = `
+    <div class="position-card">
+      <span class="side-label side-${p.side}">${p.side}</span>
+      <span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-mute); margin-left:8px">qty ${p.qty}</span>
+      <div class="upnl ${pnlClass}">${fmtINR(upnl)}</div>
+      <div class="row"><span class="k">Entry</span><span>${fmtPx(p.entry_price)}</span></div>
+      <div class="row"><span class="k">VWAP at entry</span><span>${fmtPx(p.vwap_at_entry)}</span></div>
+      <div class="row"><span class="k">z at entry</span><span>${p.z_at_entry != null ? p.z_at_entry.toFixed(2) : '—'}</span></div>
+      <div class="row"><span class="k">TP (VWAP)</span><span>${fmtPx(p.tp)}</span></div>
+      <div class="row"><span class="k">SL</span><span>${fmtPx(p.sl)}</span></div>
+    </div>`;
+}
+
+function renderTrades(s) {
+  const wrap = document.getElementById('trades-table-wrap');
+  const trades = (s.trades || []).slice().reverse();
+  if (trades.length === 0) {
+    wrap.innerHTML = '<div class="empty-state">No trades yet</div>';
+    return;
+  }
+  wrap.innerHTML = `<table>
+    <thead><tr><th>Time</th><th>Side</th><th>Pts</th><th>P&amp;L</th><th>Reason</th></tr></thead>
+    <tbody>${trades.map(t => `
+      <tr>
+        <td>${(t.closed_at || '').split('T')[1]?.slice(0, 8) || '—'}</td>
+        <td class="side-${t.side}">${t.side}</td>
+        <td>${t.pnl_points >= 0 ? '+' : ''}${t.pnl_points.toFixed(1)}</td>
+        <td class="${t.pnl > 0 ? 'pnl-pos' : 'pnl-neg'}">${fmtINR(t.pnl)}</td>
+        <td>${t.reason}</td>
+      </tr>`).join('')}</tbody></table>`;
+}
+
+function renderChart(s) {
+  const bars = (s.bars || []).slice();
+  if (s.current_bar) bars.push(s.current_bar);
+  if (bars.length === 0) return;
+  // De-duplicate by ts_start (last wins)
+  const seen = new Map();
+  for (const b of bars) seen.set(b.ts_start, b);
+  const dedup = Array.from(seen.values()).sort((a, b) => a.ts_start - b.ts_start);
+
+  candleSeries.setData(dedup.map(b => ({
+    time: b.ts_start,
+    open: b.open, high: b.high, low: b.low, close: b.close,
+  })));
+
+  // VWAP and bands: use current values flat-extended for the visible chart
+  // (without per-bar VWAP history this gives a usable visual reference)
+  if (s.vwap != null && s.sigma != null) {
+    const t0 = dedup[0].ts_start, t1 = dedup[dedup.length - 1].ts_start;
+    vwapLine.setData([{ time: t0, value: s.vwap }, { time: t1, value: s.vwap }]);
+    upper1.setData([{ time: t0, value: s.vwap_upper_1 }, { time: t1, value: s.vwap_upper_1 }]);
+    lower1.setData([{ time: t0, value: s.vwap_lower_1 }, { time: t1, value: s.vwap_lower_1 }]);
+    const ENTRY_SIGMA = (s.params && s.params.ENTRY_SIGMA) || 1.5;
+    upper2.setData([{ time: t0, value: s.vwap + ENTRY_SIGMA * s.sigma }, { time: t1, value: s.vwap + ENTRY_SIGMA * s.sigma }]);
+    lower2.setData([{ time: t0, value: s.vwap - ENTRY_SIGMA * s.sigma }, { time: t1, value: s.vwap - ENTRY_SIGMA * s.sigma }]);
+  }
+
+  // Markers for trades
+  const markers = (s.trades || []).flatMap(t => {
+    const tIn = Date.parse(t.opened_at) / 1000;
+    const tOut = Date.parse(t.closed_at) / 1000;
+    return [
+      { time: tIn, position: t.side === 'LONG' ? 'belowBar' : 'aboveBar',
+        color: t.side === 'LONG' ? '#1a7f64' : '#d1242f',
+        shape: t.side === 'LONG' ? 'arrowUp' : 'arrowDown',
+        text: t.side[0] },
+      { time: tOut, position: 'inBar', color: t.pnl > 0 ? '#1a7f64' : '#d1242f',
+        shape: 'circle', text: t.reason },
+    ];
+  });
+  candleSeries.setMarkers(markers);
+}
+
+let stale = false;
+async function refresh() {
+  try {
+    const s = await fetchState();
+    document.getElementById('symbol').innerText = s.symbol || '—';
+    document.getElementById('mode').innerText = s.mode || 'PAPER';
+    document.getElementById('strategy-tag').innerText = s.strategy || 'VWAP Mean Reversion';
+    document.getElementById('last-update').innerText = (s.updated_at || s.last_tick_at || '').split('T')[1]?.slice(0, 8) || '—';
+    if (s.params) {
+      document.getElementById('params').innerText = 'params: ' + Object.entries(s.params).map(([k, v]) => `${k}=${v}`).join('  ·  ');
+      document.getElementById('lot-info').innerText = `${s.params.LOTS} lots × ${s.lot_size || 65} = ${(s.params.LOTS || 0) * (s.lot_size || 65)} contracts`;
+    }
+    renderTiles(s);
+    renderPosition(s);
+    renderTrades(s);
+    renderChart(s);
+    document.getElementById('pulse').className = 'pulse';
+    stale = false;
+  } catch (e) {
+    document.getElementById('pulse').className = 'pulse stale';
+    stale = true;
+  }
+}
+setInterval(refresh, 1500);
+refresh();
+</script>
+</body>
+</html>
