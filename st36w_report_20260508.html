@@ -94,13 +94,13 @@
 <div class="container">
     <header>
         <h1>ST 36W AI Nifty — End-of-Day Report</h1>
-        <p class="subtitle">Fri, 08 May 2026 &middot; NIFTY monthly futures &middot; 1 lot &middot; paper trade</p>
+        <p class="subtitle">Fri, 08 May 2026 &middot; NIFTY monthly futures &middot; 1 lot &middot; SIM</p>
     </header>
 
     <div class="tiles">
         <div class="tile">
             <div class="tile-label">Total Trades</div>
-            <div class="tile-value">0</div>
+            <div class="tile-value">1</div>
         </div>
         <div class="tile">
             <div class="tile-label">Wins</div>
@@ -108,7 +108,7 @@
         </div>
         <div class="tile">
             <div class="tile-label">Losses</div>
-            <div class="tile-value tile-red">0</div>
+            <div class="tile-value tile-red">1</div>
         </div>
         <div class="tile">
             <div class="tile-label">Win Rate</div>
@@ -116,19 +116,19 @@
         </div>
         <div class="tile">
             <div class="tile-label">P&amp;L (pts)</div>
-            <div class="tile-value" style="color:#1a7f37;">0.00</div>
+            <div class="tile-value" style="color:#cf222e;">-39.90</div>
         </div>
         <div class="tile">
             <div class="tile-label">P&amp;L (Rs)</div>
-            <div class="tile-value" style="color:#1a7f37;">0.00</div>
+            <div class="tile-value" style="color:#cf222e;">-2,593.50</div>
         </div>
         <div class="tile">
             <div class="tile-label">Max Win</div>
-            <div class="tile-value tile-green">0.00</div>
+            <div class="tile-value tile-green">-39.90</div>
         </div>
         <div class="tile">
             <div class="tile-label">Max Loss</div>
-            <div class="tile-value tile-red">0.00</div>
+            <div class="tile-value tile-red">-39.90</div>
         </div>
     </div>
 
@@ -136,17 +136,42 @@
     <div id="chart"></div>
 
     <h2>Trade Log</h2>
-    <div class="empty">No trades today.</div>
+    
+            <table class="trade-table">
+                <thead>
+                    <tr>
+                        <th>Time (IST)</th>
+                        <th>Side</th>
+                        <th>Entry</th>
+                        <th>Exit</th>
+                        <th>Reason</th>
+                        <th>P&amp;L (pts)</th>
+                        <th>P&amp;L (Rs)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td>14:03:00</td>
+                    <td style="color:#cf222e;font-weight:600;">SELL</td>
+                    <td>24160.00</td>
+                    <td>24199.90</td>
+                    <td>SL</td>
+                    <td style="color:#cf222e;font-weight:600;">-39.90</td>
+                    <td style="color:#cf222e;font-weight:600;">-2,593.50</td>
+                </tr>
+                </tbody>
+            </table>
+        
 
     <footer>
-        <span>Generated 2026-05-08 16:06:26 IST</span>
+        <span>Generated 2026-05-08 18:10:54 IST</span>
         <span>AlgoVeda &middot; TranquilVeda Pvt Ltd</span>
     </footer>
 </div>
 
 <script>
-    const candles = [];
-    const markers = [];
+    const candles = [{"time": 1778229180, "open": 24172.4, "high": 24185.0, "low": 24160.0, "close": 24160.0}];
+    const markers = [{"time": 1778229180, "position": "aboveBar", "color": "#cf222e", "shape": "arrowDown", "text": "SELL 24160.00"}, {"time": 1778229330, "position": "belowBar", "color": "#cf222e", "shape": "arrowUp", "text": "EXIT 24199.90 (SL)"}];
 
     (function renderChart() {
         const container = document.getElementById('chart');

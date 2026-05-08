@@ -48,21 +48,21 @@ footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #d0d7de;
 
 <h2>Summary</h2>
 <div class="tiles">
-  <div class="tile"><div class="tile-label">Total Trades</div><div class="tile-value">5</div></div>
-  <div class="tile"><div class="tile-label">Wins</div><div class="tile-value p">2</div></div>
+  <div class="tile"><div class="tile-label">Total Trades</div><div class="tile-value">7</div></div>
+  <div class="tile"><div class="tile-label">Wins</div><div class="tile-value p">4</div></div>
   <div class="tile"><div class="tile-label">Losses</div><div class="tile-value n">3</div></div>
-  <div class="tile"><div class="tile-label">Win Rate</div><div class="tile-value">40.0%</div></div>
-  <div class="tile"><div class="tile-label">Net P&amp;L (pts)</div><div class="tile-value p">+53.4</div></div>
-  <div class="tile"><div class="tile-label">Net P&amp;L (₹/lot)</div><div class="tile-value p">₹+3,471</div></div>
-  <div class="tile"><div class="tile-label">Avg Win</div><div class="tile-value p">+76.9</div></div>
-  <div class="tile"><div class="tile-label">Avg Loss</div><div class="tile-value n">-33.5</div></div>
+  <div class="tile"><div class="tile-label">Win Rate</div><div class="tile-value">57.1%</div></div>
+  <div class="tile"><div class="tile-label">Net P&amp;L (pts)</div><div class="tile-value p">+119.0</div></div>
+  <div class="tile"><div class="tile-label">Net P&amp;L (₹/lot)</div><div class="tile-value p">₹+7,735</div></div>
+  <div class="tile"><div class="tile-label">Avg Win</div><div class="tile-value p">+59.2</div></div>
+  <div class="tile"><div class="tile-label">Avg Loss</div><div class="tile-value n">-39.3</div></div>
 </div>
 
 <div class="note">
 <b>How to read this:</b> Each row is one paper trade the strategy fired during the backtest. Same evaluator code that runs live — just fed historical 1-min bars instead of WebSocket ticks. Exit reasons: <span class="reason rsn-tp">TP</span> = Take Profit (+70 pts), <span class="reason rsn-sl">SL</span> = Stop Loss (−35 pts), <span class="reason rsn-tsl">TSL</span> = Trailing SL (after profit ≥ 40), <span class="reason rsn-uex">UEX</span> = forced 15:30 IST close. P&amp;L (₹) assumes 1 lot of 65 contracts.
 </div>
 
-<h2>Trade Log (5 trades)</h2>
+<h2>Trade Log (7 trades)</h2>
 <table>
 <thead><tr>
 <th>Entry Time (IST)</th><th>Side</th><th>Entry ₹</th>
@@ -70,16 +70,18 @@ footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #d0d7de;
 <th>P&amp;L (pts)</th><th>P&amp;L (₹)</th>
 </tr></thead>
 <tbody>
-<tr><td>2026-04-20 Mon 15:24</td><td class="side-sell">SELL</td><td>24432.50</td><td>15:30</td><td>24450.00</td><td><span class="reason rsn-uex">UEX</span></td><td class="n">-17.50</td><td class="n">₹-1,138</td></tr>
+<tr><td>2026-04-09 Thu 09:51</td><td class="side-sell">SELL</td><td>24010.00</td><td>10:12</td><td>24048.00</td><td><span class="reason rsn-tsl">TSL</span></td><td class="n">-38.00</td><td class="n">₹-2,470</td></tr>
+<tr><td>2026-04-16 Thu 12:00</td><td class="side-sell">SELL</td><td>24335.00</td><td>12:36</td><td>24263.00</td><td><span class="reason rsn-tp">TP</span></td><td class="p">+72.00</td><td class="p">₹+4,680</td></tr>
+<tr><td>2026-04-23 Thu 14:33</td><td class="side-sell">SELL</td><td>24275.00</td><td>15:30</td><td>24265.00</td><td><span class="reason rsn-uex">UEX</span></td><td class="p">+10.00</td><td class="p">₹+650</td></tr>
+<tr><td>2026-04-24 Fri 09:36</td><td class="side-sell">SELL</td><td>24140.00</td><td>09:55</td><td>24065.10</td><td><span class="reason rsn-tp">TP</span></td><td class="p">+74.90</td><td class="p">₹+4,869</td></tr>
 <tr><td>2026-04-27 Mon 12:15</td><td class="side-buy">BUY</td><td>24150.00</td><td>13:16</td><td>24230.00</td><td><span class="reason rsn-tp">TP</span></td><td class="p">+80.00</td><td class="p">₹+5,200</td></tr>
-<tr><td>2026-04-30 Thu 09:30</td><td class="side-sell">SELL</td><td>23930.40</td><td>09:32</td><td>23969.90</td><td><span class="reason rsn-sl">SL</span></td><td class="n">-39.50</td><td class="n">₹-2,568</td></tr>
-<tr><td>2026-05-04 Mon 09:27</td><td class="side-buy">BUY</td><td>24284.10</td><td>09:38</td><td>24357.90</td><td><span class="reason rsn-tp">TP</span></td><td class="p">+73.80</td><td class="p">₹+4,797</td></tr>
-<tr><td>2026-05-06 Wed 12:24</td><td class="side-sell">SELL</td><td>24081.60</td><td>12:26</td><td>24125.00</td><td><span class="reason rsn-sl">SL</span></td><td class="n">-43.40</td><td class="n">₹-2,821</td></tr>
+<tr><td>2026-04-30 Thu 09:24</td><td class="side-sell">SELL</td><td>23940.00</td><td>09:34</td><td>23980.00</td><td><span class="reason rsn-sl">SL</span></td><td class="n">-40.00</td><td class="n">₹-2,600</td></tr>
+<tr><td>2026-05-08 Fri 14:03</td><td class="side-sell">SELL</td><td>24160.00</td><td>14:05</td><td>24199.90</td><td><span class="reason rsn-sl">SL</span></td><td class="n">-39.90</td><td class="n">₹-2,594</td></tr>
 </tbody>
 </table>
 
 <footer>
-Generated 2026-05-08T10:24:55.940210+05:30  ·  AlgoVeda  ·  TranquilVeda Pvt Ltd
+Generated 2026-05-08T18:10:54.721774+05:30  ·  AlgoVeda  ·  TranquilVeda Pvt Ltd
 <br>Caveat: backtest uses current month's contract for entire window. Late-April-onward portion uses the actual front-month NIFTY26MAYFUT and is most reliable. Earlier dates used the same contract while it was still far-month, so liquidity-adjusted P&amp;L for those rows is directionally correct but optimistic.
 </footer>
 </div>
