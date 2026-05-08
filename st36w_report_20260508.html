@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ST 36W AI Nifty — EOD Report 20260508</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        padding: 32px;
+        background: #ffffff;
+        color: #24292f;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { border-bottom: 1px solid #d0d7de; padding-bottom: 16px; margin-bottom: 24px; }
+    h1 { font-size: 24px; margin: 0 0 4px; color: #24292f; font-weight: 600; }
+    .subtitle { color: #57606a; font-size: 14px; margin: 0; }
+    h2 { font-size: 18px; margin: 32px 0 16px; color: #24292f; font-weight: 600; }
+    .tiles {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+    .tile {
+        background: #f6f8fa;
+        border: 1px solid #d0d7de;
+        border-radius: 8px;
+        padding: 16px;
+        text-align: left;
+    }
+    .tile-label { color: #57606a; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+    .tile-value { font-size: 22px; font-weight: 600; color: #24292f; }
+    .tile-green { color: #1a7f37; }
+    .tile-red { color: #cf222e; }
+    #chart {
+        width: 100%;
+        height: 500px;
+        border: 1px solid #d0d7de;
+        border-radius: 8px;
+        background: #ffffff;
+        overflow: hidden;
+    }
+    .empty {
+        background: #f6f8fa;
+        border: 1px solid #d0d7de;
+        border-radius: 8px;
+        padding: 24px;
+        text-align: center;
+        color: #57606a;
+    }
+    .trade-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+        border: 1px solid #d0d7de;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .trade-table th {
+        background: #f6f8fa;
+        text-align: left;
+        padding: 10px 12px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #57606a;
+        border-bottom: 1px solid #d0d7de;
+    }
+    .trade-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #eaeef2;
+        font-variant-numeric: tabular-nums;
+    }
+    .trade-table tr:last-child td { border-bottom: none; }
+    .trade-table tr:hover td { background: #f6f8fa; }
+    footer {
+        margin-top: 40px;
+        padding-top: 16px;
+        border-top: 1px solid #d0d7de;
+        color: #57606a;
+        font-size: 12px;
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>ST 36W AI Nifty — End-of-Day Report</h1>
+        <p class="subtitle">Fri, 08 May 2026 &middot; NIFTY monthly futures &middot; 1 lot &middot; paper trade</p>
+    </header>
+
+    <div class="tiles">
+        <div class="tile">
+            <div class="tile-label">Total Trades</div>
+            <div class="tile-value">0</div>
+        </div>
+        <div class="tile">
+            <div class="tile-label">Wins</div>
+            <div class="tile-value tile-green">0</div>
+        </div>
+        <div class="tile">
+            <div class="tile-label">Losses</div>
+            <div class="tile-value tile-red">0</div>
+        </div>
+        <div class="tile">
+            <div class="tile-label">Win Rate</div>
+            <div class="tile-value">0.0%</div>
+        </div>
+        <div class="tile">
+            <div class="tile-label">P&amp;L (pts)</div>
+            <div class="tile-value" style="color:#1a7f37;">0.00</div>
+        </div>
+        <div class="tile">
+            <div class="tile-label">P&amp;L (Rs)</div>
+            <div class="tile-value" style="color:#1a7f37;">0.00</div>
+        </div>
+        <div class="tile">
+            <div class="tile-label">Max Win</div>
+            <div class="tile-value tile-green">0.00</div>
+        </div>
+        <div class="tile">
+            <div class="tile-label">Max Loss</div>
+            <div class="tile-value tile-red">0.00</div>
+        </div>
+    </div>
+
+    <h2>Price Chart with Trades</h2>
+    <div id="chart"></div>
+
+    <h2>Trade Log</h2>
+    <div class="empty">No trades today.</div>
+
+    <footer>
+        <span>Generated 2026-05-08 16:06:26 IST</span>
+        <span>AlgoVeda &middot; TranquilVeda Pvt Ltd</span>
+    </footer>
+</div>
+
+<script>
+    const candles = [];
+    const markers = [];
+
+    (function renderChart() {
+        const container = document.getElementById('chart');
+        if (!container || !window.LightweightCharts) { return; }
+        const chart = LightweightCharts.createChart(container, {
+            layout: {
+                background: { type: 'solid', color: '#ffffff' },
+                textColor: '#24292f',
+            },
+            grid: {
+                vertLines: { color: '#eaeef2' },
+                horzLines: { color: '#eaeef2' },
+            },
+            rightPriceScale: { borderColor: '#d0d7de' },
+            timeScale: {
+                borderColor: '#d0d7de',
+                timeVisible: true,
+                secondsVisible: false,
+            },
+            crosshair: { mode: 1 },
+            autoSize: true,
+        });
+        const series = chart.addCandlestickSeries({
+            upColor: '#1a7f37',
+            downColor: '#cf222e',
+            borderUpColor: '#1a7f37',
+            borderDownColor: '#cf222e',
+            wickUpColor: '#1a7f37',
+            wickDownColor: '#cf222e',
+        });
+        if (candles.length) {
+            series.setData(candles);
+            if (markers.length) { series.setMarkers(markers); }
+            chart.timeScale().fitContent();
+        } else {
+            container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#57606a;">No price data for this session.</div>';
+        }
+    })();
+</script>
+</body>
+</html>
