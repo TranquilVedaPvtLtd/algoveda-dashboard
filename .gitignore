@@ -1,1 +1,25 @@
 .vercel
+
+# AlgoVeda project files — this repo is the public algoveda-dashboard
+# working tree, but the AlgoVeda Python project lives in the same directory.
+# These paths must NEVER be committed to the public dashboard repo.
+.env
+.env.*
+.claude/
+CLAUDE.md
+HISTORY.md
+README.md
+active/
+algoveda-dashboard/
+dashboard/
+data/
+docs/
+logs/
+ops/
+skill-drafts/
+src/
+tests/
+.pytest_cache/
+__pycache__/
+*.pyc
+.DS_Store
